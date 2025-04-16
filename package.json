@@ -1,0 +1,46 @@
+{
+  "name": "web-image",
+  "version": "0.0.0",
+  "description": "Pure web based image conversion and transformation library",
+  "main": "index.js",
+  "type": "module",
+  "files": [
+    "dest"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "keywords": [
+    "image",
+    "web",
+    "transform",
+    "convert"
+  ],
+  "author": "Borut Svara <borut@svara.io>",
+  "license": "ISC",
+  "devDependencies": {
+    "@reactit/hooks": "^0.1.16",
+    "@tailwindcss/vite": "^4.1.4",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/node": "^22.14.1",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.0",
+    "prettier": "^3.5.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4.1.4",
+    "vite": "^6.3.0",
+    "vite-plugin-dts": "^4.5.3",
+    "vite-plugin-external": "^6.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/svaraborut/web-image.git"
+  },
+  "bugs": {
+    "url": "https://github.com/svaraborut/web-image/issues"
+  },
+  "homepage": "https://github.com/svaraborut/web-image#readme"
+}
