@@ -22,12 +22,9 @@ function parseCss(value: CSSUnit): [number, string | undefined] {
     throw new Error(`Cannot parse ${value}`)
 }
 
-export function toCss(value: CSSUnit, unit: string): string {
+export function toCss(value: CSSUnit, unit?: string): string {
     const [num, valueUnit] = parseCss(value)
-    if (!(valueUnit || unit)) {
-        throw new Error(`Unknown value unit`)
-    }
-    return `${num}${valueUnit || unit}`
+    return `${num}${valueUnit || unit || ''}`
 }
 
 /**

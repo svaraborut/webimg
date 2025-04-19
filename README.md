@@ -24,11 +24,11 @@ browser, without sending your data anywhere.
     - `transform()`
 - Filter
     - ✅ `blur()`
-    - `brightness()`
-    - `contrast()`
-    - `grayscale()`
-    - `hueRotate()`
-    - `invert()`
-    - `opacity()`
+    - ✅ `brightness()`
+    - ✅ `contrast()`
+    - ✅ `grayscale()`
+    - ✅ `hueRotate()`
+    - ✅ `invert()`
+    - ✅ `opacity()`
     - ✅ `saturate()`
-    - `sepia()`
+    - ✅ `sepia()`

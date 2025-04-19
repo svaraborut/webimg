@@ -28,8 +28,36 @@ export class ImageTransformer {
         this.addFilter(`blur(${toCss(length, 'px')})`)
     }
 
+    brightness(percentage: CSSUnit) {
+        this.addFilter(`brightness(${toCss(percentage)})`)
+    }
+
+    contrast(percentage: CSSUnit) {
+        this.addFilter(`contrast(${toCss(percentage)})`)
+    }
+
+    grayscale(amount: CSSUnit) {
+        this.addFilter(`grayscale(${toCss(amount)})`)
+    }
+
+    hueRotation(angle: CSSUnit) {
+        this.addFilter(`hue-rotate(${toCss(angle, 'rad')})`)
+    }
+
+    invert(percentage: CSSUnit = 1.0) {
+        this.addFilter(`invert(${toCss(percentage)})`)
+    }
+
+    opacity(percentage: CSSUnit) {
+        this.addFilter(`opacity(${toCss(percentage)})`)
+    }
+
     saturate(percentage: CSSUnit) {
-        this.addFilter(`saturate(${toCss(percentage, '%')})`)
+        this.addFilter(`saturate(${toCss(percentage)})`)
+    }
+
+    sepia(percentage: CSSUnit) {
+        this.addFilter(`sepia(${toCss(percentage)})`)
     }
 
     // Transforms
