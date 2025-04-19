@@ -10,7 +10,7 @@ export interface ResizeOptions {
     mode?: 'fill' | 'contain' | 'cover' | 'none'
     // Determines the transformation center same as object-position
     // https://developer.mozilla.org/en-US/docs/Web/CSS/object-position
-    // default '50% 50%'
+    // default '50%'
     position?: CSSPoint
 }
 
@@ -21,7 +21,8 @@ export function resize({
 }: ResizeOptions): ImageTransformFn {
     return ({ size, c2d }) => {
         // [1] Compute image patch size. Size of the image patch to be visible inside
-        // the target expressed in IMAGE coordinates
+        // the target expressed in IMAGE coordinates.
+        // todo : review approach in rotate() may be simpler
         const targetSize = fromCssSizeToPx(_targetSize, size)
         let imgPatch: Size
         const imgAr = size.width / size.height

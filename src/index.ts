@@ -1,5 +1,6 @@
 import { ImageTransformFn } from '@/types.ts'
 import { ResizeOptions, resize } from '@/units/resize.ts'
+import { RotateOptions, rotate } from '@/units/rotate.ts'
 
 type Size = { width: number; height: number }
 
@@ -46,16 +47,9 @@ export class ImageTransformer {
         })
     }
 
-    // todo : rotation fit mode
-    rotate(deg: number) {
-        const rotRad = (deg * Math.PI) / 180
+    rotate(options: RotateOptions) {
         this.units.push({
-            transform: ({ size, c2d }) => {
-                // Translate to rotate around the center
-                c2d.translate(size.width / 2, size.height / 2)
-                c2d.rotate(rotRad)
-                c2d.translate(-size.width / 2, -size.height / 2)
-            },
+            transform: rotate(options),
         })
     }
 

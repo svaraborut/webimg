@@ -36,6 +36,24 @@ export function fromCssUnitToPx(value: CSSUnit, baseValue?: number): number {
     throw new Error(`Unsupported unit ${unit}`)
 }
 
+/**
+ * Converts css angles to radians. Missing unit is assumed to be radians
+ * https://developer.mozilla.org/en-US/docs/Web/CSS/angle
+ */
+export function fromCssUnitToRad(value: CSSUnit): number {
+    const [num, unit] = parseCss(value)
+    if (!unit || unit == 'rad') {
+        return num
+    } else if (unit === 'deg') {
+        return (num / 180) * Math.PI
+    } else if (unit === 'grad') {
+        return (num / 200) * Math.PI
+    } else if (unit === 'turn') {
+        return num * 2 * Math.PI
+    }
+    throw new Error(`Unsupported unit ${unit}`)
+}
+
 export function fromCssSizeToPx(value: CSSSize, baseValue?: Size): Size {
     if (isSize(value)) {
         return {
