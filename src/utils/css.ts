@@ -22,6 +22,14 @@ function parseCss(value: CSSUnit): [number, string | undefined] {
     throw new Error(`Cannot parse ${value}`)
 }
 
+export function toCss(value: CSSUnit, unit: string): string {
+    const [num, valueUnit] = parseCss(value)
+    if (!(valueUnit || unit)) {
+        throw new Error(`Unknown value unit`)
+    }
+    return `${num}${valueUnit || unit}`
+}
+
 /**
  * Processes any css unit value to a pixel size, it also supports % value
  * https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Values_and_units

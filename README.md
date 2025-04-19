@@ -15,20 +15,20 @@ browser, without sending your data anywhere.
     - [Change Format](https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Formats/Image_types)
     - Change Compression
 - Transform
-    - `resize()`
-    - `rotate()`
+    - ✅ `resize()`
+    - ✅ `rotate()`
     - `flip()`
     - `scale()`
     - `translate()`
     - `shear()`
     - `transform()`
 - Filter
-    - `blur()`
+    - ✅ `blur()`
     - `brightness()`
     - `contrast()`
     - `grayscale()`
     - `hueRotate()`
     - `invert()`
     - `opacity()`
-    - `saturate()`
+    - ✅ `saturate()`
     - `sepia()`

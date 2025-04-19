@@ -1,19 +1,7 @@
-import { ImageTransformFn } from '@/types.ts'
+import { ImageTransformFn, Size } from '@/types.ts'
 import { ResizeOptions, resize } from '@/units/resize.ts'
 import { RotateOptions, rotate } from '@/units/rotate.ts'
-
-type Size = { width: number; height: number }
-
-export type ImageTransformUnit = {
-    filter?: string
-    transform?: ImageTransformFn
-}
-
-export type CSSUnit = string | number
-
-function toCSS(value: string | number, defaultUnit: string = 'px') {
-    return typeof value === 'number' ? `${value}${defaultUnit}` : value
-}
+import { CSSUnit, toCss } from '@/utils/css.ts'
 
 /**
  * Instance of a reusable image transformation pipeline. This class
@@ -21,54 +9,58 @@ function toCSS(value: string | number, defaultUnit: string = 'px') {
  * set of transformation procedures and utilities.
  */
 export class ImageTransformer {
-    units: ImageTransformUnit[] = []
-
     // Settings
     background: string | CanvasGradient | CanvasPattern = '#000'
 
     // Effects
     // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/filter
+    private filters: string[] = []
+
+    resetFilters() {
+        this.filters = []
+    }
+
+    addFilter(filter: string) {
+        this.filters.push(filter)
+    }
 
     blur(length: CSSUnit) {
-        this.units.push({ filter: `blur(${toCSS(length)})` })
+        this.addFilter(`blur(${toCss(length, 'px')})`)
     }
 
     saturate(percentage: CSSUnit) {
-        this.units.push({ filter: `saturate(${toCSS(percentage, '%')})` })
+        this.addFilter(`saturate(${toCss(percentage, '%')})`)
     }
 
-    // todo : other
-
     // Transforms
+    private units: ImageTransformFn[] = []
+
+    resetTransforms() {
+        this.units = []
+    }
+
+    addTransform(transform: ImageTransformFn) {
+        this.units.push(transform)
+    }
 
     resize(options: ResizeOptions) {
-        this.units.push({
-            transform: resize(options),
-        })
+        this.addTransform(resize(options))
     }
 
     rotate(options: RotateOptions) {
-        this.units.push({
-            transform: rotate(options),
-        })
+        this.addTransform(rotate(options))
     }
 
-    flip(horizontal: boolean, vertical: boolean) {
-        this.units.push({
-            transform: ({ size, c2d }) => {
-                // Translate to rotate around the center
-                c2d.translate(size.width / 2, size.height / 2)
-                c2d.scale(horizontal ? -1 : 1, vertical ? -1 : 1)
-                c2d.translate(-size.width / 2, -size.height / 2)
-            },
-        })
+    // flip(options: FlipOptions) {
+    //     this.addTransform(flip(options))
+    // }
+
+    // Common
+
+    reset() {
+        this.resetFilters()
+        this.resetTransforms()
     }
-
-    // todo : other
-
-    // Clipping
-
-    // todo : image clip
 
     async transform(img: HTMLImageElement) {
         // Machinery
@@ -84,27 +76,22 @@ export class ImageTransformer {
         // canvas is resized, then re-apply everything
         let size = imageSize
         for (const unit of this.units) {
-            if (!unit.transform) continue
-            const ret = unit.transform({ size, c2d })
+            const ret = unit({ size, c2d })
             if (ret) size = ret.size
         }
         canvas.width = size.width
         canvas.height = size.height
         c2d.resetTransform() // just in case
 
+        // Filter
+        c2d.filter = this.filters.join(' ') || 'none'
+
         // Transform
         size = imageSize
-        const filters = []
         for (const unit of this.units) {
-            if (unit.filter) {
-                filters.push(unit.filter)
-            }
-            if (unit.transform) {
-                const ret = unit.transform({ size, c2d })
-                if (ret) size = ret.size
-            }
+            const ret = unit({ size, c2d })
+            if (ret) size = ret.size
         }
-        c2d.filter = filters.join(' ') || 'none'
 
         // Clear
         c2d.fillStyle = this.background

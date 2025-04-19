@@ -3,7 +3,7 @@ import { ImageTransformer } from '@/index.ts'
 import { loadImage } from '@/utils/loaders.ts'
 import { useQuery } from '@reactit/hooks'
 
-const image = '/grid.jpg'
+const image = '/chameleon.jpg'
 
 export function App() {
     const task = useQuery(async () => {
