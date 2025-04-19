@@ -1,8 +1,11 @@
+import { ImageTransformFn } from '@/types.ts'
+import { ResizeOptions, resize } from '@/units/resize.ts'
+
 type Size = { width: number; height: number }
 
 export type ImageTransformUnit = {
     filter?: string
-    transform?: (size: Size, ctx: CanvasRenderingContext2D) => void | Size
+    transform?: ImageTransformFn
 }
 
 export type CSSUnit = string | number
@@ -37,11 +40,9 @@ export class ImageTransformer {
 
     // Transforms
 
-    resize(width: number, height: number) {
+    resize(options: ResizeOptions) {
         this.units.push({
-            transform: (size, ctx) => {
-                return { width, height }
-            },
+            transform: resize(options),
         })
     }
 
@@ -49,22 +50,22 @@ export class ImageTransformer {
     rotate(deg: number) {
         const rotRad = (deg * Math.PI) / 180
         this.units.push({
-            transform: (size, ctx) => {
+            transform: ({ size, c2d }) => {
                 // Translate to rotate around the center
-                ctx.translate(size.width / 2, size.height / 2)
-                ctx.rotate(rotRad)
-                ctx.translate(-size.width / 2, -size.height / 2)
+                c2d.translate(size.width / 2, size.height / 2)
+                c2d.rotate(rotRad)
+                c2d.translate(-size.width / 2, -size.height / 2)
             },
         })
     }
 
     flip(horizontal: boolean, vertical: boolean) {
         this.units.push({
-            transform: (size, ctx) => {
+            transform: ({ size, c2d }) => {
                 // Translate to rotate around the center
-                ctx.translate(size.width / 2, size.height / 2)
-                ctx.scale(horizontal ? -1 : 1, vertical ? -1 : 1)
-                ctx.translate(-size.width / 2, -size.height / 2)
+                c2d.translate(size.width / 2, size.height / 2)
+                c2d.scale(horizontal ? -1 : 1, vertical ? -1 : 1)
+                c2d.translate(-size.width / 2, -size.height / 2)
             },
         })
     }
@@ -78,43 +79,45 @@ export class ImageTransformer {
     async transform(img: HTMLImageElement) {
         // Machinery
         const canvas = document.createElement('canvas')
-        const ctx = canvas.getContext('2d')
-        if (!ctx) {
+        const c2d = canvas.getContext('2d')
+        if (!c2d) {
             throw new Error('Failed to create a 2D context')
         }
 
+        const imageSize: Size = { width: img.width, height: img.height }
+
         // (?) Compute canvas size as the transformation is cleared when the
         // canvas is resized, then re-apply everything
-        const imageSize: Size = { width: img.width, height: img.height }
         let size = imageSize
         for (const unit of this.units) {
             if (!unit.transform) continue
-            size = unit.transform(size, ctx) ?? size
+            const ret = unit.transform({ size, c2d })
+            if (ret) size = ret.size
         }
         canvas.width = size.width
         canvas.height = size.height
-        ctx.resetTransform() // just in case
+        c2d.resetTransform() // just in case
 
         // Transform
         size = imageSize
         const filters = []
         for (const unit of this.units) {
             if (unit.filter) {
-                // todo : dedupe
                 filters.push(unit.filter)
             }
             if (unit.transform) {
-                size = unit.transform(size, ctx) ?? size
+                const ret = unit.transform({ size, c2d })
+                if (ret) size = ret.size
             }
         }
-        ctx.filter = filters.join(' ') || 'none'
+        c2d.filter = filters.join(' ') || 'none'
 
         // Clear
-        ctx.fillStyle = this.background
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        c2d.fillStyle = this.background
+        c2d.fillRect(0, 0, canvas.width, canvas.height)
 
         // Render
-        ctx.drawImage(img, 0, 0)
+        c2d.drawImage(img, 0, 0)
 
         return canvas.toDataURL('image/jpeg', 80)
     }
