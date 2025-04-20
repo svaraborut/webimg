@@ -15,3 +15,30 @@ export function download(obj: Downloadable, filename?: string) {
     // Revoke
     if (objectUrl) URL.revokeObjectURL(objectUrl)
 }
+
+/**
+ * Common image types supported by all major browsers
+ * https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Formats/Image_types
+ */
+export const commonImageTypes = [
+    'image/apng',
+    'image/avif',
+    'image/gif',
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/bmp',
+] as const
+
+export type ImageType = (typeof commonImageTypes)[number]
+
+/**
+ * Provides file extensions (without dot) for common image file formats
+ */
+export function getTypeFileExtension(type: ImageType): string {
+    if (!commonImageTypes.includes(type)) {
+        throw new Error('Not a supported image type')
+    } else {
+        return type.replace('image/', '')
+    }
+}

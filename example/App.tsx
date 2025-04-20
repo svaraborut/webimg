@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { ImageTransformer } from '@/index.ts'
+import { ImageType, commonImageTypes, getTypeFileExtension } from '@/utils/download.ts'
 import { loadImage } from '@/utils/loaders.ts'
 import { useAsync, useQuery } from '@reactit/hooks'
 
@@ -9,6 +10,7 @@ const modes = ['demo', 'resize', 'rotate', 'flip', 'scale', 'translate', 'effect
 
 export function App() {
     const [mode, setMode] = useState<(typeof modes)[number]>(modes[0])
+    const [type, setType] = useState<ImageType>('image/jpeg')
 
     // Create transformers
     const its = useMemo<ImageTransformer[]>(() => {
@@ -17,21 +19,16 @@ export function App() {
         // Examples
         if (mode === 'demo') {
             return [
-                new ImageTransformer().saturate(2).resize({ size: 400, mode: 'none' }),
-                new ImageTransformer().grayscale(0.5).resize({ size: 400, mode: 'none' }),
-                new ImageTransformer().sepia(0.8).resize({ size: 400, mode: 'none' }),
-                new ImageTransformer().resize({ size: 200, mode: 'none' }),
-                new ImageTransformer().resize({ size: 200, mode: 'none' }).rotate({ angle: '45deg' }),
-                new ImageTransformer().rotate({ angle: '45deg' }).resize({ size: 200, mode: 'none' }),
-                new ImageTransformer().resize({ size: 200, mode: 'none' }).scale({ scale: 2 }),
-                new ImageTransformer()
-                    .scale({ scale: 2 })
-                    .resize({ size: 200, mode: 'none' })
-                    .rotate({ angle: '45deg' }),
-                new ImageTransformer()
-                    .rotate({ angle: '45deg' })
-                    .resize({ size: 200, mode: 'none' })
-                    .scale({ scale: 2 }),
+                // base.resize({ width: 8_000 }), // load test
+                base.saturate(2).resize({ size: 400, mode: 'none' }),
+                base.grayscale(0.5).resize({ size: 400, mode: 'none' }),
+                base.sepia(0.8).resize({ size: 400, mode: 'none' }),
+                base.resize({ size: 200, mode: 'none' }),
+                base.resize({ size: 200, mode: 'none' }).rotate({ angle: '45deg' }),
+                base.rotate({ angle: '45deg' }).resize({ size: 200, mode: 'none' }),
+                base.resize({ size: 200, mode: 'none' }).scale({ scale: 2 }),
+                base.scale({ scale: 2 }).resize({ size: 200, mode: 'none' }).rotate({ angle: '45deg' }),
+                base.rotate({ angle: '45deg' }).resize({ size: 200, mode: 'none' }).scale({ scale: 2 }),
                 // .rotate({ angle: '45deg' }),
             ]
         }
@@ -142,7 +139,7 @@ export function App() {
                 (it: ImageTransformer) => it.sepia(0),
                 (it: ImageTransformer) => it.sepia('50%'),
                 (it: ImageTransformer) => it.sepia(1),
-            ].map(fn => fn(new ImageTransformer()))
+            ].map(fn => fn(base))
         }
 
         return []
@@ -162,21 +159,34 @@ export function App() {
     const download = useAsync(async (ix: number) => {
         if (!img.result) return []
         // await its[ix].applyToDownload(img.result!, `example_${mode}_${ix}.jpg`, 'image/jpeg', 50)
-        await its[ix].applyToDownload(img.result!, `example_${mode}_${ix}.webp`, 'image/webp', 1)
+        await its[ix].applyToDownload(img.result!, `example_${mode}_${ix}.${getTypeFileExtension(type)}`, type, 1)
     })
 
     return (
         <div className='flex flex-col gap-8 p-4'>
-            <div className='flex bg-gray-200 p-1 rounded font-mono'>
-                {modes.map(m => (
-                    <div
-                        key={m}
-                        className={'px-2 py-1 rounded cursor-pointer' + (m === mode ? ' bg-white' : '')}
-                        onClick={() => setMode(m)}
-                    >
-                        {m}
-                    </div>
-                ))}
+            <div className='sticky top-4 z-10 flex justify-between bg-gray-200 p-1 rounded font-mono'>
+                <div className='flex'>
+                    {modes.map(m => (
+                        <div
+                            key={m}
+                            className={'px-2 py-1 rounded cursor-pointer' + (m === mode ? ' bg-white' : '')}
+                            onClick={() => setMode(m)}
+                        >
+                            {m}
+                        </div>
+                    ))}
+                </div>
+                <div className='flex'>
+                    {commonImageTypes.map(t => (
+                        <div
+                            key={t}
+                            className={'px-2 py-1 rounded cursor-pointer' + (t === type ? ' bg-white' : '')}
+                            onClick={() => setType(t)}
+                        >
+                            {getTypeFileExtension(t)}
+                        </div>
+                    ))}
+                </div>
             </div>
 
             <div className='grid grid-cols-3 items-center gap-4'>
@@ -184,9 +194,9 @@ export function App() {
             </div>
             <div className='grid grid-cols-3 items-center gap-4'>
                 {task.result?.map((src, ix) => (
-                    <div className='flex justify-center'>
+                    <div key={ix} className='flex justify-center'>
                         <div className='group rounded-lg bg-gray-300 overflow-hidden cursor-pointer relative'>
-                            <img key={ix} src={src} alt='Transformed' />
+                            <img src={src} alt='Transformed' />
                             <div
                                 className='opacity-0 group-hover:opacity-100 transition bg-black/30 inset-0 absolute font-mono flex items-center justify-center text-white'
                                 onClick={() => download.run(ix)}

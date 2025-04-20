@@ -8,6 +8,11 @@ import { CSSUnit, toCss } from '@/utils/css.ts'
 import { download } from '@/utils/download.ts'
 import { canvasToBlob } from '@/utils/exporters.ts'
 
+// (?) From empiric testing, this size does already become critical on many browsers
+// so for now will be kept as a safeguard. In future may be deemed too restrictive
+// and increased or completely removed.
+const MAX_CANVAS = 8_192
+
 /**
  * Instance of a reusable image transformation pipeline. This class
  * will allow you to generically transform an image with an arbitrary
@@ -142,6 +147,11 @@ export class ImageTransformer {
         c2d.resetTransform() // just in case
 
         // Resize
+        // (!) attempting to use a large canvas https://stackoverflow.com/questions/6081483
+        // will fail or render a black image, so is better to fail immediately
+        if (size.width > MAX_CANVAS || size.height > MAX_CANVAS) {
+            throw new Error(`Output image cannot exceed ${MAX_CANVAS}x${MAX_CANVAS}`)
+        }
         canvas.width = size.width
         canvas.height = size.height
 
