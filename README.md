@@ -18,7 +18,7 @@ browser, without sending your data anywhere.
     - ✅ `resize()`
     - ✅ `rotate()`
     - ✅ `flip()`
-    - `scale()`
+    - ✅ `scale()`
     - `translate()`
     - `shear()`
     - ❌ `transform()` use `addTransform()`

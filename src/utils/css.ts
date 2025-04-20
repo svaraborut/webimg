@@ -42,6 +42,21 @@ export function fromCssUnitToPx(value: CSSUnit, baseValue?: number): number {
 }
 
 /**
+ * Process a css value to a scale
+ */
+export function fromCssUnitToScale(value: CSSUnit, baseValue?: number): number {
+    const [num, unit] = parseCss(value)
+    if (!unit) {
+        return num
+    } else if (unit === '%') {
+        return num * 0.01
+    } else if (unit === 'px' && typeof baseValue === 'number') {
+        return num / baseValue
+    }
+    throw new Error(`Unsupported unit ${unit}`)
+}
+
+/**
  * Converts css angles to radians. Missing unit is assumed to be radians
  * https://developer.mozilla.org/en-US/docs/Web/CSS/angle
  */
