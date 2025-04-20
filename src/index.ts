@@ -70,28 +70,28 @@ export class ImageTransformer {
         this.units = []
     }
 
-    addTransform(transform: ImageTransformFn) {
+    transform(transform: ImageTransformFn) {
         this.units.push(transform)
     }
 
     resize(options: ResizeOptions) {
-        this.addTransform(resize(options))
+        this.transform(resize(options))
     }
 
     rotate(options: RotateOptions) {
-        this.addTransform(rotate(options))
+        this.transform(rotate(options))
     }
 
     flip(options: FlipOptions) {
-        this.addTransform(flip(options))
+        this.transform(flip(options))
     }
 
     scale(options: ScaleOptions) {
-        this.addTransform(scale(options))
+        this.transform(scale(options))
     }
 
     translate(options: TranslateOptions) {
-        this.addTransform(translate(options))
+        this.transform(translate(options))
     }
 
     // Common
@@ -101,7 +101,7 @@ export class ImageTransformer {
         this.resetTransforms()
     }
 
-    async transform(img: HTMLImageElement) {
+    async apply(img: HTMLImageElement) {
         // Machinery
         const canvas = document.createElement('canvas')
         const c2d = canvas.getContext('2d')

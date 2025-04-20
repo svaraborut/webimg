@@ -153,7 +153,7 @@ export function App() {
             })
         }
 
-        return await Promise.all(its.map(it => it.transform(img)))
+        return await Promise.all(its.map(it => it.apply(img)))
     }, [mode])
 
     return (

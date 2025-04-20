@@ -20,8 +20,8 @@ browser, without sending your data anywhere.
     - ✅ `flip()`
     - ✅ `scale()`
     - ✅ `translate()`
-    - `shear()`
-    - ❌ `transform()` use `addTransform()`
+    - ❌ `shear()` use `transform(fn)`
+    - ❌ `transform()` use `transform(fn)`
 - Filter
     - ✅ `blur()`
     - ✅ `brightness()`
