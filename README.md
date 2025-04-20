@@ -19,7 +19,7 @@ browser, without sending your data anywhere.
     - ✅ `rotate()`
     - ✅ `flip()`
     - ✅ `scale()`
-    - `translate()`
+    - ✅ `translate()`
     - `shear()`
     - ❌ `transform()` use `addTransform()`
 - Filter

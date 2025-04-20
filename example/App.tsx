@@ -5,7 +5,7 @@ import { useQuery } from '@reactit/hooks'
 
 const image = '/chameleon.jpg'
 
-const modes = ['demo', 'resize', 'rotate', 'flip', 'effects', 'scale']
+const modes = ['demo', 'resize', 'rotate', 'flip', 'effects', 'scale', 'translate']
 
 export function App() {
     const [mode, setMode] = useState<(typeof modes)[number]>(modes[0])
@@ -101,6 +101,16 @@ export function App() {
             ].map(v => {
                 const it = new ImageTransformer()
                 it.scale(v)
+                it.saturate(2)
+                return it
+            })
+        }
+
+        // Translate
+        if (mode === 'translate') {
+            its = [{}, { x: '10px' }, { x: '50%' }, { x: '10px', y: '10px' }, { x: '50%', y: '50%' }].map(v => {
+                const it = new ImageTransformer()
+                it.translate(v)
                 it.saturate(2)
                 return it
             })

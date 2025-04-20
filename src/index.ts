@@ -3,6 +3,7 @@ import { FlipOptions, flip } from '@/units/flip.ts'
 import { ResizeOptions, resize } from '@/units/resize.ts'
 import { RotateOptions, rotate } from '@/units/rotate.ts'
 import { ScaleOptions, scale } from '@/units/scale.ts'
+import { TranslateOptions, translate } from '@/units/translate.ts'
 import { CSSUnit, toCss } from '@/utils/css.ts'
 
 /**
@@ -87,6 +88,10 @@ export class ImageTransformer {
 
     scale(options: ScaleOptions) {
         this.addTransform(scale(options))
+    }
+
+    translate(options: TranslateOptions) {
+        this.addTransform(translate(options))
     }
 
     // Common
