@@ -17,11 +17,11 @@ browser, without sending your data anywhere.
 - Transform
     - ✅ `resize()`
     - ✅ `rotate()`
-    - `flip()`
+    - ✅ `flip()`
     - `scale()`
     - `translate()`
     - `shear()`
-    - `transform()`
+    - ❌ `transform()` use `addTransform()`
 - Filter
     - ✅ `blur()`
     - ✅ `brightness()`

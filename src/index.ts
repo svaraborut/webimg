@@ -1,4 +1,5 @@
 import { ImageTransformFn, Size } from '@/types.ts'
+import { FlipOptions, flip } from '@/units/flip.ts'
 import { ResizeOptions, resize } from '@/units/resize.ts'
 import { RotateOptions, rotate } from '@/units/rotate.ts'
 import { CSSUnit, toCss } from '@/utils/css.ts'
@@ -79,9 +80,9 @@ export class ImageTransformer {
         this.addTransform(rotate(options))
     }
 
-    // flip(options: FlipOptions) {
-    //     this.addTransform(flip(options))
-    // }
+    flip(options: FlipOptions) {
+        this.addTransform(flip(options))
+    }
 
     // Common
 

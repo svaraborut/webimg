@@ -60,40 +60,55 @@ export function App() {
         //     return it
         // })
 
-        // Effects
+        // Flip
         const its = [
-            (it: ImageTransformer) => it.blur(0),
-            (it: ImageTransformer) => it.blur(1),
-            (it: ImageTransformer) => it.blur(10),
-            (it: ImageTransformer) => it.brightness(1),
-            (it: ImageTransformer) => it.brightness('50%'),
-            (it: ImageTransformer) => it.brightness(1.5),
-            (it: ImageTransformer) => it.contrast(1),
-            (it: ImageTransformer) => it.contrast('40%'),
-            (it: ImageTransformer) => it.contrast(1.5),
-            (it: ImageTransformer) => it.saturate(1),
-            (it: ImageTransformer) => it.saturate(1.5),
-            (it: ImageTransformer) => it.saturate('400%'),
-            (it: ImageTransformer) => it.grayscale(0),
-            (it: ImageTransformer) => it.grayscale(0.5),
-            (it: ImageTransformer) => it.grayscale('100%'),
-            (it: ImageTransformer) => it.hueRotation(0),
-            (it: ImageTransformer) => it.hueRotation('45deg'),
-            (it: ImageTransformer) => it.hueRotation('1turn'),
-            (it: ImageTransformer) => it.invert(0),
-            (it: ImageTransformer) => it.invert('50%'),
-            (it: ImageTransformer) => it.invert(1),
-            (it: ImageTransformer) => it.opacity(1),
-            (it: ImageTransformer) => it.opacity('50%'),
-            (it: ImageTransformer) => it.opacity(0.1),
-            (it: ImageTransformer) => it.sepia(0),
-            (it: ImageTransformer) => it.sepia('50%'),
-            (it: ImageTransformer) => it.sepia(1),
-        ].map(fn => {
+            { x: true },
+            { y: true },
+            { x: true, y: true },
+            { axes: 'horizontal' },
+            { axes: 'vertical' },
+            { axes: 'both' },
+        ].map(v => {
             const it = new ImageTransformer()
-            fn(it)
+            it.flip(v)
+            it.saturate(2)
             return it
         })
+
+        // Effects
+        // const its = [
+        //     (it: ImageTransformer) => it.blur(0),
+        //     (it: ImageTransformer) => it.blur(1),
+        //     (it: ImageTransformer) => it.blur(10),
+        //     (it: ImageTransformer) => it.brightness(1),
+        //     (it: ImageTransformer) => it.brightness('50%'),
+        //     (it: ImageTransformer) => it.brightness(1.5),
+        //     (it: ImageTransformer) => it.contrast(1),
+        //     (it: ImageTransformer) => it.contrast('40%'),
+        //     (it: ImageTransformer) => it.contrast(1.5),
+        //     (it: ImageTransformer) => it.saturate(1),
+        //     (it: ImageTransformer) => it.saturate(1.5),
+        //     (it: ImageTransformer) => it.saturate('400%'),
+        //     (it: ImageTransformer) => it.grayscale(0),
+        //     (it: ImageTransformer) => it.grayscale(0.5),
+        //     (it: ImageTransformer) => it.grayscale('100%'),
+        //     (it: ImageTransformer) => it.hueRotation(0),
+        //     (it: ImageTransformer) => it.hueRotation('45deg'),
+        //     (it: ImageTransformer) => it.hueRotation('1turn'),
+        //     (it: ImageTransformer) => it.invert(0),
+        //     (it: ImageTransformer) => it.invert('50%'),
+        //     (it: ImageTransformer) => it.invert(1),
+        //     (it: ImageTransformer) => it.opacity(1),
+        //     (it: ImageTransformer) => it.opacity('50%'),
+        //     (it: ImageTransformer) => it.opacity(0.1),
+        //     (it: ImageTransformer) => it.sepia(0),
+        //     (it: ImageTransformer) => it.sepia('50%'),
+        //     (it: ImageTransformer) => it.sepia(1),
+        // ].map(fn => {
+        //     const it = new ImageTransformer()
+        //     fn(it)
+        //     return it
+        // })
 
         return await Promise.all(its.map(it => it.transform(img)))
     }, [])
