@@ -1,29 +1,34 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { ImageTransformer } from '@/index.ts'
 import { loadImage } from '@/utils/loaders.ts'
-import { useQuery } from '@reactit/hooks'
+import { useAsync, useQuery } from '@reactit/hooks'
 
 const image = '/chameleon.jpg'
 
-const modes = ['demo', 'resize', 'rotate', 'flip', 'effects', 'scale', 'translate']
+const modes = ['demo', 'resize', 'rotate', 'flip', 'scale', 'translate', 'effects']
 
 export function App() {
     const [mode, setMode] = useState<(typeof modes)[number]>(modes[0])
 
-    const task = useQuery(async () => {
-        const img = await loadImage(image)
-        let its: ImageTransformer[] = []
-
-        // const it = new ImageTransformer()
-        // it.background = 'red'
-        // it.resize({ size: { height: 400, width: 3000 }, mode: 'contain' })
-        // it.saturate(2)
-        // it.blur(4)
-        // it.rotate(45)
+    // Create transformers
+    const its = useMemo<ImageTransformer[]>(() => {
+        // Examples
+        if (mode === 'demo') {
+            return [
+                new ImageTransformer().saturate(2).resize({ size: 400, mode: 'none' }),
+                new ImageTransformer().grayscale(0.5).resize({ size: 400, mode: 'none' }),
+                new ImageTransformer().sepia(0.8).resize({ size: 400, mode: 'none' }),
+                new ImageTransformer().rotate({ angle: '45deg' }),
+                new ImageTransformer().resize({ size: 200, mode: 'none' }),
+                new ImageTransformer().resize({ size: 200, mode: 'none' }).rotate({ angle: '45deg' }),
+                new ImageTransformer().rotate({ angle: '45deg' }).resize({ size: 200, mode: 'none' }),
+                // .rotate({ angle: '45deg' }),
+            ]
+        }
 
         // Resize
         if (mode === 'resize') {
-            its = [
+            return [
                 { size: { height: 400, width: 400 }, mode: 'fill' },
                 { size: { height: 400, width: 400 }, mode: 'contain' },
                 { size: { height: 400, width: 300 }, mode: 'contain' },
@@ -45,7 +50,7 @@ export function App() {
 
         // Rotate
         if (mode === 'rotate') {
-            its = [
+            return [
                 { angle: '2deg' },
                 { angle: '50grad' },
                 { angle: '50grad', center: '0%' },
@@ -71,7 +76,7 @@ export function App() {
 
         // Flip
         if (mode === 'flip') {
-            its = [
+            return [
                 { x: true },
                 { y: true },
                 { x: true, y: true },
@@ -88,7 +93,7 @@ export function App() {
 
         // Scale
         if (mode === 'scale') {
-            its = [
+            return [
                 { scale: 1 },
                 { scale: 2 },
                 { scale: 0.6 },
@@ -108,7 +113,7 @@ export function App() {
 
         // Translate
         if (mode === 'translate') {
-            its = [{}, { x: '10px' }, { x: '50%' }, { x: '10px', y: '10px' }, { x: '50%', y: '50%' }].map(v => {
+            return [{}, { x: '10px' }, { x: '50%' }, { x: '10px', y: '10px' }, { x: '50%', y: '50%' }].map(v => {
                 const it = new ImageTransformer()
                 it.translate(v)
                 it.saturate(2)
@@ -118,7 +123,7 @@ export function App() {
 
         // Effects
         if (mode === 'effects') {
-            its = [
+            return [
                 (it: ImageTransformer) => it.blur(0),
                 (it: ImageTransformer) => it.blur(1),
                 (it: ImageTransformer) => it.blur(10),
@@ -138,7 +143,7 @@ export function App() {
                 (it: ImageTransformer) => it.hueRotation('45deg'),
                 (it: ImageTransformer) => it.hueRotation('1turn'),
                 (it: ImageTransformer) => it.invert(0),
-                (it: ImageTransformer) => it.invert('50%'),
+                (it: ImageTransformer) => it.invert('40%'),
                 (it: ImageTransformer) => it.invert(1),
                 (it: ImageTransformer) => it.opacity(1),
                 (it: ImageTransformer) => it.opacity('50%'),
@@ -153,8 +158,25 @@ export function App() {
             })
         }
 
-        return await Promise.all(its.map(it => it.apply(img)))
+        return []
     }, [mode])
+
+    const img = useQuery(() => {
+        return loadImage(image)
+    }, [])
+
+    // Render preview images
+    const task = useQuery(async () => {
+        if (!img.result) return []
+        return await Promise.all(its.map(it => it.apply(img.result!, 'image/webp', 0.2)))
+    }, [img.result, its])
+
+    // Download images
+    const download = useAsync(async (ix: number) => {
+        if (!img.result) return []
+        // await its[ix].applyToDownload(img.result!, `example_${mode}_${ix}.jpg`, 'image/jpeg', 50)
+        await its[ix].applyToDownload(img.result!, `example_${mode}_${ix}.webp`, 'image/webp', 1)
+    })
 
     return (
         <div className='flex flex-col gap-8 p-4'>
@@ -175,7 +197,17 @@ export function App() {
             </div>
             <div className='grid grid-cols-3 items-center gap-4'>
                 {task.result?.map((src, ix) => (
-                    <img key={ix} className='rounded-lg bg-gray-300' src={src} alt='Transformed' />
+                    <div className='flex justify-center'>
+                        <div className='group rounded-lg bg-gray-300 overflow-hidden cursor-pointer relative'>
+                            <img key={ix} src={src} alt='Transformed' />
+                            <div
+                                className='opacity-0 group-hover:opacity-100 transition bg-black/30 inset-0 absolute font-mono flex items-center justify-center text-white'
+                                onClick={() => download.run(ix)}
+                            >
+                                <span>DOWNLOAD</span>
+                            </div>
+                        </div>
+                    </div>
                 ))}
             </div>
             <div>

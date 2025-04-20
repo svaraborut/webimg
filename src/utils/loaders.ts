@@ -21,17 +21,32 @@ export function loadImageFromFile(file: File): Promise<HTMLImageElement> {
 }
 
 /**
+ * Create a new Image object by loading the image from a Blob
+ */
+export async function loadImageFromBlob(blob: Blob): Promise<HTMLImageElement> {
+    const url = URL.createObjectURL(blob)
+    try {
+        return await loadImageFromUrl(url)
+    } finally {
+        URL.revokeObjectURL(url)
+    }
+}
+
+export type ImageSource = string | HTMLImageElement | File | Blob
+
+/**
  * Load an image from any type of browser based resource
  */
-export async function loadImage(mix: string | HTMLImageElement | File): Promise<HTMLImageElement> {
+export async function loadImage(mix: ImageSource): Promise<HTMLImageElement> {
     if (typeof mix === 'string') {
         return loadImageFromUrl(mix)
     } else if (mix instanceof HTMLImageElement) {
         return mix
     } else if (mix instanceof File) {
         return loadImageFromFile(mix)
+    } else if (mix instanceof Blob) {
+        return loadImageFromBlob(mix)
     } else {
         throw new Error(`Cannot load image from unknown type ${mix}`)
     }
-    // todo : plain data
 }

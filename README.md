@@ -32,3 +32,10 @@ browser, without sending your data anywhere.
     - ✅ `opacity()`
     - ✅ `saturate()`
     - ✅ `sepia()`
+
+## Todo
+
+- ✅ Make chainable
+- ⚠️ Transform composition has issues (see demo)
+- Better `resize()` options signature
+- Make immutable

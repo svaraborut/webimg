@@ -5,6 +5,8 @@ import { RotateOptions, rotate } from '@/units/rotate.ts'
 import { ScaleOptions, scale } from '@/units/scale.ts'
 import { TranslateOptions, translate } from '@/units/translate.ts'
 import { CSSUnit, toCss } from '@/utils/css.ts'
+import { download } from '@/utils/download.ts'
+import { canvasToBlob } from '@/utils/exporters.ts'
 
 /**
  * Instance of a reusable image transformation pipeline. This class
@@ -21,46 +23,48 @@ export class ImageTransformer {
 
     resetFilters() {
         this.filters = []
+        return this
     }
 
     addFilter(filter: string) {
         this.filters.push(filter)
+        return this
     }
 
     blur(length: CSSUnit) {
-        this.addFilter(`blur(${toCss(length, 'px')})`)
+        return this.addFilter(`blur(${toCss(length, 'px')})`)
     }
 
     brightness(percentage: CSSUnit) {
-        this.addFilter(`brightness(${toCss(percentage)})`)
+        return this.addFilter(`brightness(${toCss(percentage)})`)
     }
 
     contrast(percentage: CSSUnit) {
-        this.addFilter(`contrast(${toCss(percentage)})`)
+        return this.addFilter(`contrast(${toCss(percentage)})`)
     }
 
     grayscale(amount: CSSUnit) {
-        this.addFilter(`grayscale(${toCss(amount)})`)
+        return this.addFilter(`grayscale(${toCss(amount)})`)
     }
 
     hueRotation(angle: CSSUnit) {
-        this.addFilter(`hue-rotate(${toCss(angle, 'rad')})`)
+        return this.addFilter(`hue-rotate(${toCss(angle, 'rad')})`)
     }
 
     invert(percentage: CSSUnit = 1.0) {
-        this.addFilter(`invert(${toCss(percentage)})`)
+        return this.addFilter(`invert(${toCss(percentage)})`)
     }
 
     opacity(percentage: CSSUnit) {
-        this.addFilter(`opacity(${toCss(percentage)})`)
+        return this.addFilter(`opacity(${toCss(percentage)})`)
     }
 
     saturate(percentage: CSSUnit) {
-        this.addFilter(`saturate(${toCss(percentage)})`)
+        return this.addFilter(`saturate(${toCss(percentage)})`)
     }
 
     sepia(percentage: CSSUnit) {
-        this.addFilter(`sepia(${toCss(percentage)})`)
+        return this.addFilter(`sepia(${toCss(percentage)})`)
     }
 
     // Transforms
@@ -68,30 +72,32 @@ export class ImageTransformer {
 
     resetTransforms() {
         this.units = []
+        return this
     }
 
     transform(transform: ImageTransformFn) {
         this.units.push(transform)
+        return this
     }
 
     resize(options: ResizeOptions) {
-        this.transform(resize(options))
+        return this.transform(resize(options))
     }
 
     rotate(options: RotateOptions) {
-        this.transform(rotate(options))
+        return this.transform(rotate(options))
     }
 
     flip(options: FlipOptions) {
-        this.transform(flip(options))
+        return this.transform(flip(options))
     }
 
     scale(options: ScaleOptions) {
-        this.transform(scale(options))
+        return this.transform(scale(options))
     }
 
     translate(options: TranslateOptions) {
-        this.transform(translate(options))
+        return this.transform(translate(options))
     }
 
     // Common
@@ -99,11 +105,14 @@ export class ImageTransformer {
     reset() {
         this.resetFilters()
         this.resetTransforms()
+        return this
     }
 
-    async apply(img: HTMLImageElement) {
-        // Machinery
-        const canvas = document.createElement('canvas')
+    /**
+     * Apply the transformation by rendering the result on a user provided canvas
+     */
+    async applyOnCanvas(canvas: HTMLCanvasElement, img: HTMLImageElement) {
+        // Init
         const c2d = canvas.getContext('2d')
         if (!c2d) {
             throw new Error('Failed to create a 2D context')
@@ -122,6 +131,10 @@ export class ImageTransformer {
         canvas.height = size.height
         c2d.resetTransform() // just in case
 
+        // Clear
+        c2d.fillStyle = this.background
+        c2d.fillRect(0, 0, canvas.width, canvas.height)
+
         // Filter
         c2d.filter = this.filters.join(' ') || 'none'
 
@@ -132,13 +145,49 @@ export class ImageTransformer {
             if (ret) size = ret.size
         }
 
-        // Clear
-        c2d.fillStyle = this.background
-        c2d.fillRect(0, 0, canvas.width, canvas.height)
-
         // Render
         c2d.drawImage(img, 0, 0)
 
         return canvas.toDataURL('image/jpeg', 80)
+    }
+
+    /**
+     * Apply the transformation of the image returning a new canvas
+     */
+    async applyToCanvas(img: HTMLImageElement): Promise<HTMLCanvasElement> {
+        const canvas = document.createElement('canvas')
+        await this.applyOnCanvas(canvas, img)
+        return canvas
+    }
+
+    /**
+     * Apply the transformation of the image and returns a Blob containing the new image
+     */
+    async applyToBlob(img: HTMLImageElement, type?: string, quality?: number): Promise<Blob> {
+        const canvas = await this.applyToCanvas(img)
+        return canvasToBlob(canvas, type, quality)
+    }
+
+    /**
+     * Apply the transformation of the image and returns a Data URL containing the new image
+     */
+    async applyToDataUrl(img: HTMLImageElement, type?: string, quality?: number): Promise<string> {
+        const canvas = await this.applyToCanvas(img)
+        return canvas.toDataURL(type, quality)
+    }
+
+    /**
+     * Alias for `applyToDataUrl()`
+     */
+    apply(img: HTMLImageElement, type?: string, quality?: number) {
+        return this.applyToDataUrl(img, type, quality)
+    }
+
+    /**
+     * Apply the transformation of the image and downloads it to the user
+     */
+    async applyToDownload(img: HTMLImageElement, filename?: string, type?: string, quality?: number) {
+        const blob = await this.applyToBlob(img, type, quality)
+        download(blob, filename)
     }
 }
