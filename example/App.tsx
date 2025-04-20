@@ -39,17 +39,21 @@ export function App() {
         // Resize
         if (mode === 'resize') {
             return [
-                { size: { height: 400, width: 400 }, mode: 'fill' },
-                { size: { height: 400, width: 400 }, mode: 'contain' },
-                { size: { height: 400, width: 300 }, mode: 'contain' },
-                { size: { height: 400, width: 3000 }, mode: 'contain' },
-                { size: { height: 400, width: 400 }, mode: 'cover' },
-                { size: { height: 400, width: 300 }, mode: 'cover' },
-                { size: { height: 400, width: 3000 }, mode: 'cover' },
-                { size: { height: 200, width: 200 }, mode: 'none' },
-                { size: { height: 200, width: 200 }, mode: 'none', position: 0 },
-                { size: { height: 200, width: 200 }, mode: 'none', position: '100%' },
-                { size: { height: 200, width: 200 }, mode: 'none', position: { x: 0, y: '100%' } },
+                { height: 400, width: 400, mode: 'fill' },
+                { height: 400, width: 400, mode: 'contain' },
+                { height: 400, width: 300, mode: 'contain' },
+                { height: 400, width: 3000, mode: 'contain' },
+                { height: 400, width: 400, mode: 'cover' },
+                { height: 400, width: 300, mode: 'cover' },
+                { height: 400, width: 3000, mode: 'cover' },
+                { height: 200, width: 200, mode: 'none' },
+                { height: 200, width: 200, mode: 'none', position: 0 },
+                { height: 200, width: 200, mode: 'none', position: '100%' },
+                { height: 200, width: 200, mode: 'none', position: { x: 0, y: '100%' } },
+                { size: 200 },
+                { height: 200 },
+                { width: 200 },
+                {},
             ].map(v => base.resize(v))
         }
 

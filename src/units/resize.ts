@@ -1,9 +1,13 @@
 import { ImageTransformFn, Point, Size } from '@/types.ts'
-import { CSSPoint, CSSSize, fromCssPointToPx, fromCssSizeToPx } from '@/utils/css.ts'
+import { CSSPoint, CSSUnit, fromCssPointToPx, fromCssUnitToPx } from '@/utils/css.ts'
 
 export interface ResizeOptions {
-    // Target image size
-    size: CSSSize
+    // Target image size. Can provide individual sides or `size` to define
+    // them both. If is not possible to determine any of the sizes the image
+    // aspect ratio is preserved.
+    size?: CSSUnit
+    width?: CSSUnit
+    height?: CSSUnit
     // Resizing mode, same to CSS object-fit see
     // https://www.w3schools.com/css/css3_object-fit.asp
     // default 'fill'
@@ -15,17 +19,28 @@ export interface ResizeOptions {
 }
 
 export function resize({
-    size: _targetSize,
+    size: _size,
+    width: _width,
+    height: _height,
     mode = 'fill',
     position: _targetPosition = '50%',
 }: ResizeOptions): ImageTransformFn {
+    _width ??= _size
+    _height ??= _size
     return ({ size, c2d }) => {
+        // [0] Compute individual target sizes for the image
+        const imgAr = size.width / size.height
+        const tmpWidth = _width !== undefined ? fromCssUnitToPx(_width, size.width) : undefined
+        const tmpHeight = _height !== undefined ? fromCssUnitToPx(_height, size.height) : undefined
+        const targetSize = {
+            width: tmpWidth !== undefined ? tmpWidth : tmpHeight !== undefined ? tmpHeight * imgAr : size.width,
+            height: tmpHeight !== undefined ? tmpHeight : tmpWidth !== undefined ? tmpWidth / imgAr : size.height,
+        }
+
         // [1] Compute image patch size. Size of the image patch to be visible inside
         // the target expressed in IMAGE coordinates.
         // todo : review approach in rotate() may be simpler
-        const targetSize = fromCssSizeToPx(_targetSize, size)
         let imgPatch: Size
-        const imgAr = size.width / size.height
         const trgAr = targetSize.width / targetSize.height
         if (mode === 'fill') {
             imgPatch = size

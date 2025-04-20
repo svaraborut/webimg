@@ -37,5 +37,5 @@ browser, without sending your data anywhere.
 
 - ✅ Make chainable
 - ✅ ⚠️ Transform composition has issues (see demo)
-- Better `resize()` options signature
+- ✅ Better `resize()` options signature
 - ✅ Make immutable
