@@ -36,6 +36,6 @@ browser, without sending your data anywhere.
 ## Todo
 
 - ✅ Make chainable
-- ⚠️ Transform composition has issues (see demo)
+- ✅ ⚠️ Transform composition has issues (see demo)
 - Better `resize()` options signature
-- Make immutable
+- ✅ Make immutable

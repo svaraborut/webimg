@@ -1,4 +1,4 @@
-import { ImageTransformFn, Size } from '@/types.ts'
+import { ImageBackground, ImageTransformFn, Size } from '@/types.ts'
 import { FlipOptions, flip } from '@/units/flip.ts'
 import { ResizeOptions, resize } from '@/units/resize.ts'
 import { RotateOptions, rotate } from '@/units/rotate.ts'
@@ -15,20 +15,29 @@ import { canvasToBlob } from '@/utils/exporters.ts'
  */
 export class ImageTransformer {
     // Settings
-    background: string | CanvasGradient | CanvasPattern = '#000'
+    readonly background: ImageBackground
+    private filters: string[]
+    private units: ImageTransformFn[]
+
+    constructor(background: ImageBackground = '#000', filters: string[] = [], units: ImageTransformFn[] = []) {
+        this.background = background
+        this.filters = filters
+        this.units = units
+    }
+
+    reset() {
+        return new ImageTransformer(this.background, [], [])
+    }
 
     // Effects
     // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/filter
-    private filters: string[] = []
 
     resetFilters() {
-        this.filters = []
-        return this
+        return new ImageTransformer(this.background, [], this.units)
     }
 
     addFilter(filter: string) {
-        this.filters.push(filter)
-        return this
+        return new ImageTransformer(this.background, [...this.filters, filter], this.units)
     }
 
     blur(length: CSSUnit) {
@@ -68,16 +77,13 @@ export class ImageTransformer {
     }
 
     // Transforms
-    private units: ImageTransformFn[] = []
 
     resetTransforms() {
-        this.units = []
-        return this
+        return new ImageTransformer(this.background, this.filters, [])
     }
 
-    transform(transform: ImageTransformFn) {
-        this.units.push(transform)
-        return this
+    transform(fn: ImageTransformFn) {
+        return new ImageTransformer(this.background, this.filters, [...this.units, fn])
     }
 
     resize(options: ResizeOptions) {
@@ -101,12 +107,6 @@ export class ImageTransformer {
     }
 
     // Common
-
-    reset() {
-        this.resetFilters()
-        this.resetTransforms()
-        return this
-    }
 
     /**
      * Apply the transformation by rendering the result on a user provided canvas

@@ -12,6 +12,8 @@ export function App() {
 
     // Create transformers
     const its = useMemo<ImageTransformer[]>(() => {
+        const base = new ImageTransformer() //.saturate(2)
+
         // Examples
         if (mode === 'demo') {
             return [
@@ -48,9 +50,7 @@ export function App() {
                 { size: { height: 200, width: 200 }, mode: 'none', position: 0 },
                 { size: { height: 200, width: 200 }, mode: 'none', position: '100%' },
                 { size: { height: 200, width: 200 }, mode: 'none', position: { x: 0, y: '100%' } },
-            ].map(v => {
-                return new ImageTransformer().resize(v).saturate(2)
-            })
+            ].map(v => base.resize(v))
         }
 
         // Rotate
@@ -71,9 +71,7 @@ export function App() {
                 { angle: '50grad' },
                 { angle: '50grad', scaleMode: 'contain' },
                 { angle: '50grad', scaleMode: 'cover' },
-            ].map(v => {
-                return new ImageTransformer().rotate(v).saturate(2)
-            })
+            ].map(v => base.rotate(v))
         }
 
         // Flip
@@ -85,9 +83,7 @@ export function App() {
                 { axes: 'horizontal' },
                 { axes: 'vertical' },
                 { axes: 'both' },
-            ].map(v => {
-                return new ImageTransformer().flip(v).saturate(2)
-            })
+            ].map(v => base.flip(v))
         }
 
         // Scale
@@ -102,16 +98,14 @@ export function App() {
                 { scale: 2, center: 0 },
                 { scale: 2, center: '100%' },
                 { scale: 2, center: { x: '50%', y: '100%' } },
-            ].map(v => {
-                return new ImageTransformer().scale(v).saturate(2)
-            })
+            ].map(v => base.scale(v))
         }
 
         // Translate
         if (mode === 'translate') {
-            return [{}, { x: '10px' }, { x: '50%' }, { x: '10px', y: '10px' }, { x: '50%', y: '50%' }].map(v => {
-                return new ImageTransformer().translate(v).saturate(2)
-            })
+            return [{}, { x: '10px' }, { x: '50%' }, { x: '10px', y: '10px' }, { x: '50%', y: '50%' }].map(v =>
+                base.translate(v)
+            )
         }
 
         // Effects
@@ -144,11 +138,7 @@ export function App() {
                 (it: ImageTransformer) => it.sepia(0),
                 (it: ImageTransformer) => it.sepia('50%'),
                 (it: ImageTransformer) => it.sepia(1),
-            ].map(fn => {
-                const it = new ImageTransformer()
-                fn(it)
-                return it
-            })
+            ].map(fn => fn(new ImageTransformer()))
         }
 
         return []

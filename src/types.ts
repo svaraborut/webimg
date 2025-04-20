@@ -25,3 +25,5 @@ export interface ImageTransformContext {
 export type ImageTransformReturn = void | { size: Size }
 
 export type ImageTransformFn = (context: ImageTransformContext) => ImageTransformReturn
+
+export type ImageBackground = string | CanvasGradient | CanvasPattern
