@@ -18,10 +18,18 @@ export function App() {
                 new ImageTransformer().saturate(2).resize({ size: 400, mode: 'none' }),
                 new ImageTransformer().grayscale(0.5).resize({ size: 400, mode: 'none' }),
                 new ImageTransformer().sepia(0.8).resize({ size: 400, mode: 'none' }),
-                new ImageTransformer().rotate({ angle: '45deg' }),
                 new ImageTransformer().resize({ size: 200, mode: 'none' }),
                 new ImageTransformer().resize({ size: 200, mode: 'none' }).rotate({ angle: '45deg' }),
                 new ImageTransformer().rotate({ angle: '45deg' }).resize({ size: 200, mode: 'none' }),
+                new ImageTransformer().resize({ size: 200, mode: 'none' }).scale({ scale: 2 }),
+                new ImageTransformer()
+                    .scale({ scale: 2 })
+                    .resize({ size: 200, mode: 'none' })
+                    .rotate({ angle: '45deg' }),
+                new ImageTransformer()
+                    .rotate({ angle: '45deg' })
+                    .resize({ size: 200, mode: 'none' })
+                    .scale({ scale: 2 }),
                 // .rotate({ angle: '45deg' }),
             ]
         }
@@ -41,10 +49,7 @@ export function App() {
                 { size: { height: 200, width: 200 }, mode: 'none', position: '100%' },
                 { size: { height: 200, width: 200 }, mode: 'none', position: { x: 0, y: '100%' } },
             ].map(v => {
-                const it = new ImageTransformer()
-                it.resize(v)
-                it.saturate(2)
-                return it
+                return new ImageTransformer().resize(v).saturate(2)
             })
         }
 
@@ -57,9 +62,9 @@ export function App() {
                 { angle: '50grad', center: '100%' },
                 { angle: '50grad', center: { x: '0%', y: '100%' } },
                 { angle: '50grad', center: { x: '100%', y: '0%' } },
-                { angle: '2deg' },
-                { angle: '2deg', scaleMode: 'contain' },
-                { angle: '2deg', scaleMode: 'cover' },
+                { angle: '5deg' },
+                { angle: '5deg', scaleMode: 'contain' },
+                { angle: '5deg', scaleMode: 'cover' },
                 { angle: '90deg' },
                 { angle: '90deg', scaleMode: 'contain' },
                 { angle: '90deg', scaleMode: 'cover' },
@@ -67,10 +72,7 @@ export function App() {
                 { angle: '50grad', scaleMode: 'contain' },
                 { angle: '50grad', scaleMode: 'cover' },
             ].map(v => {
-                const it = new ImageTransformer()
-                it.rotate(v)
-                it.saturate(2)
-                return it
+                return new ImageTransformer().rotate(v).saturate(2)
             })
         }
 
@@ -84,10 +86,7 @@ export function App() {
                 { axes: 'vertical' },
                 { axes: 'both' },
             ].map(v => {
-                const it = new ImageTransformer()
-                it.flip(v)
-                it.saturate(2)
-                return it
+                return new ImageTransformer().flip(v).saturate(2)
             })
         }
 
@@ -104,20 +103,14 @@ export function App() {
                 { scale: 2, center: '100%' },
                 { scale: 2, center: { x: '50%', y: '100%' } },
             ].map(v => {
-                const it = new ImageTransformer()
-                it.scale(v)
-                it.saturate(2)
-                return it
+                return new ImageTransformer().scale(v).saturate(2)
             })
         }
 
         // Translate
         if (mode === 'translate') {
             return [{}, { x: '10px' }, { x: '50%' }, { x: '10px', y: '10px' }, { x: '50%', y: '50%' }].map(v => {
-                const it = new ImageTransformer()
-                it.translate(v)
-                it.saturate(2)
-                return it
+                return new ImageTransformer().translate(v).saturate(2)
             })
         }
 
@@ -210,11 +203,12 @@ export function App() {
                     </div>
                 ))}
             </div>
-            <div>
-                {task.isLoading && 'Loading...'}
-                {task.isFailed && (task.error?.message ?? 'Failed')}
-                {task.isSucceed && 'Ok'}
-            </div>
+            {!task.isSucceed && (
+                <div>
+                    {task.isLoading && 'Loading...'}
+                    {task.isFailed && (task.error?.message ?? 'Failed')}
+                </div>
+            )}
         </div>
     )
 }

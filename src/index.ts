@@ -123,32 +123,38 @@ export class ImageTransformer {
         // (?) Compute canvas size as the transformation is cleared when the
         // canvas is resized, then re-apply everything
         let size = imageSize
+        let t = c2d.getTransform()
         for (const unit of this.units) {
+            // (!) Extract the current transform and re-apply it after the operation
+            // this will cause the units to behave as they were performed on an image
+            // of the current size that has already undergone the transformations that
+            // lead to this point and behave in the current coordinate system.
+            t = c2d.getTransform()
+            c2d.resetTransform()
             const ret = unit({ size, c2d })
+            c2d.transform(t.a, t.b, t.c, t.d, t.e, t.f)
             if (ret) size = ret.size
         }
-        canvas.width = size.width
-        canvas.height = size.height
+
+        // (!) When resized the canvas is reset to teh original transformation so extract
+        // the transform prior to the resizing action
+        t = c2d.getTransform()
         c2d.resetTransform() // just in case
 
-        // Clear
+        // Resize
+        canvas.width = size.width
+        canvas.height = size.height
+
+        // Clear the background
         c2d.fillStyle = this.background
         c2d.fillRect(0, 0, canvas.width, canvas.height)
 
-        // Filter
+        // Apply modifiers
         c2d.filter = this.filters.join(' ') || 'none'
-
-        // Transform
-        size = imageSize
-        for (const unit of this.units) {
-            const ret = unit({ size, c2d })
-            if (ret) size = ret.size
-        }
+        c2d.setTransform(t)
 
         // Render
         c2d.drawImage(img, 0, 0)
-
-        return canvas.toDataURL('image/jpeg', 80)
     }
 
     /**
