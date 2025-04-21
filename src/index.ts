@@ -19,7 +19,6 @@ const MAX_CANVAS = 8_192
  * set of transformation procedures and utilities.
  */
 export class ImageTransformer {
-    // Settings
     readonly background: ImageBackground
     private filters: string[]
     private units: ImageTransformFn[]
@@ -33,9 +32,6 @@ export class ImageTransformer {
     reset() {
         return new ImageTransformer(this.background, [], [])
     }
-
-    // Effects
-    // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/filter
 
     resetFilters() {
         return new ImageTransformer(this.background, [], this.units)
@@ -81,8 +77,6 @@ export class ImageTransformer {
         return this.addFilter(`sepia(${toCss(percentage)})`)
     }
 
-    // Transforms
-
     resetTransforms() {
         return new ImageTransformer(this.background, this.filters, [])
     }
@@ -110,8 +104,6 @@ export class ImageTransformer {
     translate(options: TranslateOptions) {
         return this.transform(translate(options))
     }
-
-    // Common
 
     /**
      * Apply the transformation by rendering the result on a user provided canvas

@@ -1,41 +1,30 @@
-# 🖼 Web Image Rendering utility
+# 🎨 Web Image Rendering utility
 
-Quick start
+**The ultimate in-browser image transformation library.** This library brings powerful, privacy-friendly image
+processing directly to your browser. Using only native Web standards (including WebGL, Canvas, and Web Workers), it
+performs fast, high-quality image conversions, transformations, and visual effects—all entirely client-side. No servers.
+No uploads. No compromises.
 
 ```shell
 npm i @svara/webimg
 ```
 
-The ultimate web transformation image library. Uses native Web standards to convert and transform an image inside your
-browser, without sending your data anywhere.
+![Example Image](https://github.com/svaraborut/webimg/tree/main/docs/img-main.png)
 
-## Supported Operations
+## Key Features:
 
-- File manipulation
-    - [Change Format](https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Formats/Image_types)
-    - Change Compression
-- Transform
-    - ✅ `resize()`
-    - ✅ `rotate()`
-    - ✅ `flip()`
-    - ✅ `scale()`
-    - ✅ `translate()`
-    - ❌ `shear()` use `transform(fn)`
-    - ❌ `transform()` use `transform(fn)`
-- Filter
-    - ✅ `blur()`
-    - ✅ `brightness()`
-    - ✅ `contrast()`
-    - ✅ `grayscale()`
-    - ✅ `hueRotate()`
-    - ✅ `invert()`
-    - ✅ `opacity()`
-    - ✅ `saturate()`
-    - ✅ `sepia()`
+- 🚀 **Fully client-side**: All image operations happen in the browser—your data never leaves your device.
+- 🖼️ **High-resolution support**: Work with images up to **8000×8000 pixels** without performance issues.
+- 🎨 **Real-time effects & transformations**: Apply filters, transformations, and enhancements instantly.
+- 💾 **Multi-format export**: Export processed images to various formats like PNG, JPEG, and WebP.
+- 🔌 **No dependencies**: Works out of the box with modern browsers. No need for external tools or cloud services.
+- 🔧 **Developer-friendly**: Easily integrate into existing applications or vanilla JS projects.
 
-## Todo
+Whether you're building an online photo editor, a creative image generator, or simply need quick and secure image
+manipulation, this library gives you full control with minimal setup.
 
-- ✅ Make chainable
-- ✅ ⚠️ Transform composition has issues (see demo)
-- ✅ Better `resize()` options signature
-- ✅ Make immutable
+## Read More
+
+- [Documentation](https://github.com/svaraborut/webimg/tree/main/docs/docs.md)
+- [Example React App](https://github.com/svaraborut/webimg/tree/main/docs/example.md)
+- [GitHub](https://github.com/svaraborut/webimg)
