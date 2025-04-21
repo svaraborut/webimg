@@ -3,7 +3,7 @@
 Quick start
 
 ```shell
-npm i web-image
+npm i @svara/webimg
 ```
 
 The ultimate web transformation image library. Uses native Web standards to convert and transform an image inside your

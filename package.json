@@ -1,5 +1,5 @@
 {
-  "name": "web-image",
+  "name": "@svara/webimg",
   "version": "0.0.0",
   "description": "Pure web based image conversion and transformation library",
   "main": "index.js",
@@ -38,10 +38,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/svaraborut/web-image.git"
+    "url": "git+ssh://git@github.com/svaraborut/webimg.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/svaraborut/web-image/issues"
+    "url": "https://github.com/svaraborut/webimg/issues"
   },
-  "homepage": "https://github.com/svaraborut/web-image#readme"
+  "homepage": "https://github.com/svaraborut/webimg#readme"
 }
