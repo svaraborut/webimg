@@ -1,5 +1,8 @@
 # 🎨 Web Image Rendering utility
 
+[![Canary](https://github.com/svaraborut/webimg/actions/workflows/canary.yaml/badge.svg)](https://github.com/svaraborut/webimg/actions/workflows/canary.yaml)
+[![svara.io](https://svara.io/assets/badge.svg)](https://svara.io/)
+
 **The ultimate in-browser image transformation library.** This library brings powerful, privacy-friendly image
 processing directly to your browser. Using only native Web standards (including WebGL, Canvas, and Web Workers), it
 performs fast, high-quality image conversions, transformations, and visual effects—all entirely client-side. No servers.
@@ -9,7 +12,7 @@ No uploads. No compromises.
 npm i @svara/webimg
 ```
 
-![Example Image](https://github.com/svaraborut/webimg/tree/main/docs/img-main.png)
+![Example Image](./docs/img-main.png)
 
 ## Key Features:
 
