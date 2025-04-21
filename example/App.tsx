@@ -51,7 +51,7 @@ export function App() {
                 { height: 200 },
                 { width: 200 },
                 {},
-            ].map(v => base.resize(v))
+            ].map(v => base.resize(v as any))
         }
 
         // Rotate
@@ -72,7 +72,7 @@ export function App() {
                 { angle: '50grad' },
                 { angle: '50grad', scaleMode: 'contain' },
                 { angle: '50grad', scaleMode: 'cover' },
-            ].map(v => base.rotate(v))
+            ].map(v => base.rotate(v as any))
         }
 
         // Flip
@@ -84,7 +84,7 @@ export function App() {
                 { axes: 'horizontal' },
                 { axes: 'vertical' },
                 { axes: 'both' },
-            ].map(v => base.flip(v))
+            ].map(v => base.flip(v as any))
         }
 
         // Scale
@@ -99,13 +99,13 @@ export function App() {
                 { scale: 2, center: 0 },
                 { scale: 2, center: '100%' },
                 { scale: 2, center: { x: '50%', y: '100%' } },
-            ].map(v => base.scale(v))
+            ].map(v => base.scale(v as any))
         }
 
         // Translate
         if (mode === 'translate') {
             return [{}, { x: '10px' }, { x: '50%' }, { x: '10px', y: '10px' }, { x: '50%', y: '50%' }].map(v =>
-                base.translate(v)
+                base.translate(v as any)
             )
         }
 

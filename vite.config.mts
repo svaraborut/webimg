@@ -7,9 +7,13 @@ import pkg from './package.json'
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite'
 
+// (?) Development environment requires React and the /public directory
+// here we toggle the configuration to render them available
+const isDev = process.env.NODE_ENV === 'development'
+
 export default defineConfig({
     base: '/',
-    publicDir: './public',
+    publicDir: isDev ? './public' : false,
     build: {
         target: 'es2020',
         outDir: 'dist',
@@ -18,6 +22,8 @@ export default defineConfig({
             formats: ['es'],
             fileName: 'index',
         },
+        minify: true,
+        sourcemap: false,
     },
     resolve: {
         alias: {
@@ -29,10 +35,10 @@ export default defineConfig({
         tailwindcss(),
         createExternal({
             nodeBuiltins: true,
-            externalizeDeps: Object.keys((pkg as any).peerDependencies || {}).concat(
-                // todo due to demo server Object.keys((pkg as any).devDependencies || {})
-            ),
+            externalizeDeps: ([] as string[])
+                .concat(Object.keys((pkg as any).peerDependencies || {}))
+                .concat(isDev ? [] : Object.keys((pkg as any).devDependencies || {})),
         }),
-        dts({ entryRoot: 'src' }),
+        dts({ entryRoot: 'src', rollupTypes: true }),
     ],
 })
